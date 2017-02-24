@@ -12,8 +12,7 @@ describe 'Fish' do
     a_fish=Fish.new(:position,RandomStub)
     
 
-    a_fish.move([:one,:two,:three])
+    a_fish.act([:one,:two,:three])
     expect(a_fish.where).to be :one
   end
-  
 end

@@ -5,7 +5,7 @@ describe "Aquator Rules" do
   describe "for the fish" do
 
     before :each do
-      @a_fish= Fish.new(:initial_position) 
+      @a_fish= TestFish.new(:initial_position) 
       @adjacent_unoccupied_squares=[:no_occupied, :no_fishes, :nothing]    
     end
 
@@ -30,9 +30,42 @@ describe "Aquator Rules" do
       a_chronon_passes
       expect(current_position).to be last_position
     end
-    
+
+    it 'may not reproduce' do
+      a_chronon_passes
+
+      child = @a_fish.child
+
+      expect(child).to be_nil
+    end
+
+    describe 'when certain number of chronons passes' do
+      before(:each) { time_to_reproduce_arrives }
+
+      it 'reproduces when moves' do
+        parent_last_position = register_position_and_move
+        child = @a_fish.child
+
+        expect(child).to be_a(Fish)
+        expect(child.where).to be(parent_last_position)
+        expect(@a_fish.where).to_not be(parent_last_position)
+      end
+    end
+
+    def register_position_and_move
+      parent_last_position = @a_fish.where
+      @adjacent_unoccupied_squares.delete(parent_last_position)
+      a_chronon_passes
+
+      parent_last_position
+    end
+
     def a_chronon_passes 
-      @a_fish.move(@adjacent_unoccupied_squares)
+      @a_fish.act(@adjacent_unoccupied_squares)
+    end
+
+    def time_to_reproduce_arrives
+      3.times { a_chronon_passes }
     end
 
     def current_position
@@ -40,4 +73,9 @@ describe "Aquator Rules" do
     end
   end
 
+  class TestFish < Fish
+    def child
+      @child
+    end
+  end
 end

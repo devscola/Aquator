@@ -1,16 +1,16 @@
 class Fish
   TIME_GRANULARITY = 1
-  AGE_OF_REPRODUCTION = 4
+  REPRODUCTION_CYCLE = 4
 
   def initialize(position ,generator=RandomGenerator)
     @position= position
     @generator= generator
     @age = 0
+    @children=[]
   end
 
   def act(allowed_positions)
     age_increases
-
     reproduce
     move(allowed_positions)
   end
@@ -18,10 +18,12 @@ class Fish
   def where
     @position
   end
+  
+  private 
 
   def reproduce
     return unless is_time_to_give_birth?
-    @child = Fish.new(@position)
+    @children << Fish.new(@position)
   end
 
   def move(allowed_positions)
@@ -35,7 +37,7 @@ class Fish
   end
 
   def is_time_to_give_birth?
-    return (@age == AGE_OF_REPRODUCTION) 
+    return ((@age % REPRODUCTION_CYCLE) == 0) 
   end
 
   class RandomGenerator
